@@ -1,0 +1,88 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Node.js ###
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Compiled class files
+*.class
+
+# Maven-specific directories
+target/
+out/
+
+# Eclipse/IntelliJ IDEA project files
+*.classpath
+*.project
+*.settings/
+.idea/
+*.iml
+*.iws
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Backup and temporary files
+*.bak
+*.tmp
+*.swp
+*~
+
+# Dependency directories
+node_modules/
+
+# Generated JAR/WAR files
+*.jar
+*.war
+
+# Maven Wrapper files (optional)
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+
+# Exclude sensitive configuration files (if applicable)
+application.properties
+application.yml
+.env
+
+# Exclude coverage reports and test output
+coverage/
+jacoco.exec
+
