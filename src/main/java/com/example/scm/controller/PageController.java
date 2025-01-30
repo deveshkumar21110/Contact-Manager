@@ -52,27 +52,23 @@ public class PageController {
         return "contact";
     }
 
-    // @RequestMapping(value = "/login", method = RequestMethod.GET)
-    // public String login() {
-    //     return "login";
-    // }
-    
-    @GetMapping("/login")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login() {
-        return new String("login");
+        return "login";
     }
+
 
     @RequestMapping("/register")
     public String register(Model model) {
         // Adding an empty UserForm object to the model
-        UserForm userForm = new UserForm();
-        userForm.setName("Aman");
-        userForm.setEmail("aman@gmail.com");
-        userForm.setPassword("12345");
-        userForm.setAbout("I am a web developer");
-        userForm.setPhoneNumber("1234567890");
+        UserForm dForm = new UserForm();
+        dForm.setName("Aman");
+        dForm.setEmail("aman@gmail.com");
+        dForm.setPassword("12345");
+        dForm.setAbout("I am a web developer");
+        dForm.setPhoneNumber("1234567890");
 
-        model.addAttribute("defaultUser", userForm);
+        model.addAttribute("defaultFormAttribute", dForm); // Changed from "defaultUser" to "dForm"
         
         System.out.println("register page loading");
         return "register";
@@ -80,7 +76,7 @@ public class PageController {
 
     @RequestMapping(value = "/do-register", method = RequestMethod.POST)
     public String processRegister(
-            @Valid @ModelAttribute("defaultUser") UserForm newForm, // Binding form data to UserForm
+            @Valid @ModelAttribute("defaultFormAttribute") UserForm newForm, // Changed from "defaultUser" to "dForm"
             BindingResult rBindingResult,
             HttpSession session) {
 

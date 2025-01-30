@@ -4,33 +4,25 @@
   th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}"
 >
   <head>
-    <title data-th-text="${loggedInUser.name}+' |  Dashboard'">
-      Dashboard Page
-    </title>
+    <title data-th-text="${loggedInUser.name}+' |  SCM'">Dashboard Page</title>
   </head>
   <body>
     <div id="content">
-      <!-- sidebar -->
-
       <!-- user is logged in : sidebar -->
-
       <div th:if="${loggedInUser}">
-        <div data-th-replace="~{user/sidebar :: sidebar}"></div>
+        <div th:replace="~{user/sidebar :: sidebar}"></div>
       </div>
-
+      
       <div class="sm:pl-64 pt-20" style="height: 1000px">
-        <div class="flex justify-center flex-col items-center">
-          <h1 class="text-5xl">Welcome to Dashbaord page</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequatur, ratione!
-          </p>
+        <div class="flex flex-col justify-center items-center">
+          <h1 class="text-5xl">Welcome to Dashboard page</h1>
+          <p class="text-lg">This is the Dashboard page</p>
         </div>
       </div>
     </div>
 
     <script>
-      console.log("this is profile page");
+      console.log("this is Dashboard page");
     </script>
   </body>
 </html>

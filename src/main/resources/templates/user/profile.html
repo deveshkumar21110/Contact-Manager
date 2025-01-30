@@ -8,13 +8,18 @@
   </head>
   <body>
     <div id="content">
-      <!-- sidebar -->
-
       <!-- user is logged in : sidebar -->
-
-      <!-- <div th:if="${loggedInUser}">
-        <div data-th-replace="~{user/sidebar :: sidebar}"></div>
-      </div> -->
+      <div th:if="${loggedInUser}">
+        <div th:replace="~{user/sidebar :: sidebar}"></div>
+      </div>
+      
+      <div class="sm:pl-64 pt-20" style="height: 1000px">
+        <div class="flex flex-col justify-center items-center">
+          <h1 class="text-5xl">Welcome to profile page</h1>
+          <p class="text-lg">This is the profile page</p>
+        </div>
+      </div>
+    </div>
 
     <script>
       console.log("this is profile page");
