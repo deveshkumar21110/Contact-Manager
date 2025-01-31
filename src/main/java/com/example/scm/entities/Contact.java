@@ -38,6 +38,7 @@ public class Contact {
     private String email;
     private String phoneNumber;
     private String picture;
+    private String filePublicId;
     @Column(length = 1000)
     private String description;
     private String address;

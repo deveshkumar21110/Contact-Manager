@@ -3,6 +3,7 @@ package com.example.scm.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import com.example.scm.helper.Message;
 import com.example.scm.helper.MessageType;
 import com.example.scm.helper.UserDataHelper;
 import com.example.scm.services.ContactService;
+import com.example.scm.services.ImageService;
 import com.example.scm.services.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -37,11 +39,13 @@ public class ContactController {
 
     private final UserService userService;
     private final ContactService contactService;
+    private final ImageService imageService;
 
     @Autowired
-    public ContactController(UserService userService, ContactService contactService) {
+    public ContactController(UserService userService, ContactService contactService, ImageService imageService) {
         this.userService = userService;
         this.contactService = contactService;
+        this.imageService = imageService;
     }
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -62,13 +66,12 @@ public class ContactController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveContact(@Valid @ModelAttribute ContactForm contactForm, BindingResult rBindingResult,
-            Authentication authentication , HttpSession session) throws IllegalStateException, IOException {
+            Authentication authentication, HttpSession session) throws IllegalStateException, IOException {
 
         // validation
         if (rBindingResult.hasErrors()) {
-            session.setAttribute("message", 
-                Message.builder().content("Please fill the form properly.").type(MessageType.red).build()
-            );
+            session.setAttribute("message",
+                    Message.builder().content("Please fill the form properly.").type(MessageType.red).build());
             return "user/add_contact";
         }
         // contactForm -> contact
@@ -76,14 +79,9 @@ public class ContactController {
         Optional<User> userOptional = userService.getUserByEmail(email);
         logger.info("savecontact called");
 
-        // saving picture in local
-        String picturePath = null;
-        MultipartFile picture = contactForm.getPicture();
-        if (picture != null && !picture.isEmpty()) {
-            // Save the file to the server or process it as needed
-            picturePath = "C:\\Users\\HP\\OneDrive\\" + picture.getOriginalFilename();
-            picture.transferTo(new File(picturePath));
-        }
+        // saving picture in cloud
+        String fileName = UUID.randomUUID().toString();
+        String fileUrl = imageService.uploadImage(contactForm.getPicture(), fileName);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -92,17 +90,22 @@ public class ContactController {
             newContact.setName(contactForm.getName());
             newContact.setEmail(contactForm.getEmail());
             newContact.setPhoneNumber(contactForm.getPhoneNumber());
-            newContact.setPicture(picturePath);
+            // newContact.setPicture(picturePath);
+            newContact.setPicture(fileUrl);
+            logger.info("Generated file public ID: {}", fileName);
+            newContact.setFilePublicId(fileName);
             newContact.setDescription(contactForm.getAbout());
             newContact.setAddress(contactForm.getAddress());
             newContact.setFavourite(contactForm.isFavorite());
             newContact.setWebsiteLink(contactForm.getWebsiteLink());
             newContact.setUser(user);
+            logger.info("Saving contact with Public ID: {}", newContact.getFilePublicId());
             contactService.saveContact(newContact);
+            logger.info("Contact saved successfully with ID: {}", newContact.getId());
 
-            session.setAttribute("message", 
-                Message.builder().content("You have successfully added a new contact.").type(MessageType.green).build()
-            );
+            session.setAttribute("message",
+                    Message.builder().content("You have successfully added a new contact.").type(MessageType.green)
+                            .build());
             logger.info(newContact.toString());
 
             return "redirect:/user/contacts/add";

@@ -10,6 +10,8 @@ import com.example.scm.exceptions.ResourceNotfoundException;
 import com.example.scm.repositories.ContactRepo;
 import com.example.scm.services.ContactService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ContactServiceImpl implements ContactService{
 
@@ -20,6 +22,7 @@ public class ContactServiceImpl implements ContactService{
     }
 
     @Override
+    @Transactional
     public Contact saveContact(Contact contact) {
         String contactId = UUID.randomUUID().toString();
         contact.setId(contactId);
