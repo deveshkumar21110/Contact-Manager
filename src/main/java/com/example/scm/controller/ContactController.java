@@ -9,6 +9,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +18,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.scm.entities.Contact;
 import com.example.scm.entities.User;
 import com.example.scm.exceptions.ResourceNotfoundException;
 import com.example.scm.forms.ContactForm;
+import com.example.scm.helper.AppConstants;
 import com.example.scm.helper.Message;
 import com.example.scm.helper.MessageType;
 import com.example.scm.helper.UserDataHelper;
@@ -126,13 +130,20 @@ public class ContactController {
     }
 
     @RequestMapping({ "/", "" })
-    public String viewContacts(Model model) {
+    public String viewContacts(
+        @RequestParam(value = "page" , defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size,
+        @RequestParam(value = "sortBy",defaultValue = "name") String sortBy,
+        @RequestParam(value = "direction", defaultValue = AppConstants.SORT_ASC) String direction,
+        Model model) {
         String email = userDataHelper.getEmailOfLoggedInUser();
         User user = userService.getUserByEmail(email)
                 .orElseThrow(() -> new ResourceNotfoundException("User is not found: " + email));
-        List<Contact> contacts = contactService.getContactsByUser(user);
+        Page<Contact> contacts = contactService.getContactsByUser(user,page,size,sortBy,direction);
         model.addAttribute("contacts", contacts); // "contacts" attribute is added
+        model.addAttribute("defaultPageSize", AppConstants.PAGE_SIZE); // "contacts" attribute is added
 
+        // contacts
         return "user/contacts";
     }
 }

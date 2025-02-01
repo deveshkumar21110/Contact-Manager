@@ -1,6 +1,9 @@
 package com.example.scm.repositories;
 
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +19,6 @@ public interface ContactRepo extends JpaRepository<Contact, String> {
 
     List<Contact> findByNameOrEmailOrPhoneNumber(String name, String email, String phoneNumber);
 
-    List<Contact> findByUser(User user);
+    Page<Contact> findByUser(User user,Pageable pageable);
 
 }
