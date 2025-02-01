@@ -81,4 +81,47 @@ public class ContactServiceImpl implements ContactService {
         return repo.findByUser(user,pageRequest);
     }
 
+    @Override
+    public Page<Contact> searchByName(String nameKeyword, int page, int size, String sortBy, String direction,User user) {
+        // sortBy = "name", direction = "asc"
+
+        Sort.Direction sortDirection = 
+            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
+        Sort sort = Sort.by(sortDirection,sortBy);
+  
+        PageRequest pageRequest = PageRequest.of(page, size,sort);
+        return repo.findByUserAndNameContaining( user ,nameKeyword, pageRequest);
+    }
+
+    @Override
+    public Page<Contact> searchByEmail(String emailKeyword, int page, int size, String sortBy, String direction,User user) {
+        // sortBy = "name", direction = "asc"
+
+        Sort.Direction sortDirection = 
+            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
+        Sort sort = Sort.by(sortDirection,sortBy);
+  
+        PageRequest pageRequest = PageRequest.of(page, size,sort);
+        return repo.findByUserAndEmailContaining( user,emailKeyword , pageRequest);
+    }
+
+    @Override
+    public Page<Contact> searchByPhoneNumber(String phonekeyword, int page, int size, String sortBy, String direction,User user) {
+        // sortBy = "name", direction = "asc"
+
+        Sort.Direction sortDirection = 
+            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
+        Sort sort = Sort.by(sortDirection,sortBy);
+  
+        PageRequest pageRequest = PageRequest.of(page, size,sort);
+        return repo.findByUserAndPhoneNumberContaining( user,phonekeyword , pageRequest);
+    }
+
+    
 }

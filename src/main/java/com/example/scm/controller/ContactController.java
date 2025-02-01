@@ -25,6 +25,7 @@ import com.example.scm.entities.Contact;
 import com.example.scm.entities.User;
 import com.example.scm.exceptions.ResourceNotfoundException;
 import com.example.scm.forms.ContactForm;
+import com.example.scm.forms.ContactSearchForm;
 import com.example.scm.helper.AppConstants;
 import com.example.scm.helper.Message;
 import com.example.scm.helper.MessageType;
@@ -95,7 +96,7 @@ public class ContactController {
         } else {
             logger.info("No picture uploaded, skipping file upload.");
         }
-        
+
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
@@ -131,19 +132,60 @@ public class ContactController {
 
     @RequestMapping({ "/", "" })
     public String viewContacts(
-        @RequestParam(value = "page" , defaultValue = "0") int page,
-        @RequestParam(value = "size", defaultValue = "10") int size,
-        @RequestParam(value = "sortBy",defaultValue = "name") String sortBy,
-        @RequestParam(value = "direction", defaultValue = AppConstants.SORT_ASC) String direction,
-        Model model) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "2") int size,
+            @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
+            @RequestParam(value = "direction", defaultValue = AppConstants.SORT_ASC) String direction,
+            Model model) {
+
         String email = userDataHelper.getEmailOfLoggedInUser();
         User user = userService.getUserByEmail(email)
                 .orElseThrow(() -> new ResourceNotfoundException("User is not found: " + email));
-        Page<Contact> contacts = contactService.getContactsByUser(user,page,size,sortBy,direction);
+        Page<Contact> contacts = contactService.getContactsByUser(user, page, size, sortBy, direction);
+
+        model.addAttribute("contactSearchForm", new ContactSearchForm());
         model.addAttribute("contacts", contacts); // "contacts" attribute is added
         model.addAttribute("defaultPageSize", AppConstants.PAGE_SIZE); // "contacts" attribute is added
 
-        // contacts
+        // http://localhost:8080/user/contacts/?size=1&page=0
         return "user/contacts";
+    }
+
+    // search handler
+    @RequestMapping("/search")
+    public String searchHandler(
+            @ModelAttribute ContactSearchForm contactSearchForm,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "2") int size,
+            @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
+            @RequestParam(value = "direction", defaultValue = AppConstants.SORT_ASC) String direction,
+            Model model) {
+
+        String email = userDataHelper.getEmailOfLoggedInUser();
+        User user = userService.getUserByEmail(email)
+                .orElseThrow(() -> new ResourceNotfoundException("User is not found: " + email));
+
+        Page<Contact> contacts = null;
+        if (contactSearchForm.getField().equalsIgnoreCase("name")) {
+            contacts = contactService.searchByName(contactSearchForm.getKeyword(), page, size, sortBy, direction, user);
+        } else if (contactSearchForm.getField().equalsIgnoreCase("email")) {
+            contacts = contactService.searchByEmail(contactSearchForm.getKeyword(), page, size, sortBy, direction,
+                    user);
+        } else if (contactSearchForm.getField().equalsIgnoreCase("phone")) {
+            page = (int) page;
+            contacts = contactService.searchByPhoneNumber(contactSearchForm.getKeyword(), page, size, sortBy, direction,
+                    user);
+        }
+
+        logger.info("Page size: {}", contacts.getSize());
+        logger.info("Current page number: {}", contacts.getNumber());
+        logger.info("Current page (number of elements) per page: {}", contacts.getSize());
+        logger.info("Total number of pages: {}", contacts.getTotalPages());
+        logger.info("content: {}", contacts.getContent());
+
+        model.addAttribute("defaultPageSize", AppConstants.PAGE_SIZE); // "contacts" attribute is added
+        model.addAttribute("contactSearchForm", contactSearchForm);
+        model.addAttribute("contacts", contacts);
+        return "user/search";
     }
 }
