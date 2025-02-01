@@ -1,10 +1,11 @@
 package com.example.scm.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,13 +19,14 @@ import jakarta.validation.Valid;
 @Controller
 public class PageController {
 
+    Logger logger  = LoggerFactory.getLogger(this.getClass());
+
     private final UserService userService;
 
     @Autowired
     public PageController(UserService userService) {
         this.userService = userService;
     }
-
 
     // about route
     @RequestMapping("/about")
@@ -57,7 +59,6 @@ public class PageController {
         return "login";
     }
 
-
     @RequestMapping("/register")
     public String register(Model model) {
         // Adding an empty UserForm object to the model
@@ -69,33 +70,43 @@ public class PageController {
         dForm.setPhoneNumber("1234567890");
 
         model.addAttribute("defaultFormAttribute", dForm); // Changed from "defaultUser" to "dForm"
-        
+
         System.out.println("register page loading");
         return "register";
     }
 
-    @RequestMapping(value = "/do-register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String processRegister(
-            @Valid @ModelAttribute("defaultFormAttribute") UserForm newForm, // Changed from "defaultUser" to "dForm"
+            @Valid @ModelAttribute("defaultFormAttribute") UserForm newForm,
             BindingResult rBindingResult,
+            Model model,
             HttpSession session) {
 
+        logger.info("Processing registration");
         if (rBindingResult.hasErrors()) {
-            // If there are validation errors, return to the registration page
+            // Print all validation errors to the console for debugging
+            rBindingResult.getAllErrors().forEach((e) -> {
+                System.out.println("Error: " + e.getDefaultMessage());
+            });
+
+            // Add the form with errors to the model to retain the input values
+            model.addAttribute("defaultFormAttribute", newForm);
+
+            // Return to the registration page with the form data and errors
             return "register";
         }
-        // Save user from userForm
+
+        // If no errors, save the user
         userService.saveUserFromUserForm(newForm);
 
         // Log the encoded password
         System.out.println("Encoded password: " + newForm.getPassword());
 
-        // Show success message
-        Message message = new Message("Registration successful", MessageType.red); // Ensure MessageType is correct
-        System.out.println("Message Type: " + message.getType());  // Log the message type to the console
+        // Set a success message in the session
+        Message message = new Message("Registration successful", MessageType.green);
+        System.out.println("Message Type: " + message.getType());
         session.setAttribute("message", message);
 
-
-        return "redirect:/register";
+        return "redirect:/register"; // Redirect after successful registration
     }
 }

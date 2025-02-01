@@ -3,6 +3,7 @@ package com.example.scm.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.scm.entities.Contact;
 import com.example.scm.entities.User;
 import com.example.scm.forms.UserForm;
 

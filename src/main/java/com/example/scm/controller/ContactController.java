@@ -2,6 +2,7 @@ package com.example.scm.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.scm.entities.Contact;
 import com.example.scm.entities.User;
+import com.example.scm.exceptions.ResourceNotfoundException;
 import com.example.scm.forms.ContactForm;
 import com.example.scm.helper.Message;
 import com.example.scm.helper.MessageType;
@@ -66,7 +68,7 @@ public class ContactController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveContact(@Valid @ModelAttribute ContactForm contactForm, BindingResult rBindingResult,
-            Authentication authentication, HttpSession session) throws IllegalStateException, IOException {
+            HttpSession session) throws IllegalStateException, IOException {
 
         // validation
         if (rBindingResult.hasErrors()) {
@@ -79,10 +81,17 @@ public class ContactController {
         Optional<User> userOptional = userService.getUserByEmail(email);
         logger.info("savecontact called");
 
-        // saving picture in cloud
-        String fileName = UUID.randomUUID().toString();
-        String fileUrl = imageService.uploadImage(contactForm.getPicture(), fileName);
-
+        // If file is uploaded, save it
+        String fileUrl = null;
+        String fileName = null;
+        if (contactForm.getPicture() != null && !contactForm.getPicture().isEmpty()) {
+            // Saving picture in cloud
+            fileName = UUID.randomUUID().toString();
+            fileUrl = imageService.uploadImage(contactForm.getPicture(), fileName);
+        } else {
+            logger.info("No picture uploaded, skipping file upload.");
+        }
+        
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
@@ -96,7 +105,7 @@ public class ContactController {
             newContact.setFilePublicId(fileName);
             newContact.setDescription(contactForm.getAbout());
             newContact.setAddress(contactForm.getAddress());
-            newContact.setFavourite(contactForm.isFavorite());
+            newContact.setFavorite(contactForm.isFavorite());
             newContact.setWebsiteLink(contactForm.getWebsiteLink());
             newContact.setUser(user);
             logger.info("Saving contact with Public ID: {}", newContact.getFilePublicId());
@@ -114,5 +123,16 @@ public class ContactController {
             logger.error("User not found with email: " + email);
             return "redirect:/error";
         }
+    }
+
+    @RequestMapping({ "/", "" })
+    public String viewContacts(Model model) {
+        String email = userDataHelper.getEmailOfLoggedInUser();
+        User user = userService.getUserByEmail(email)
+                .orElseThrow(() -> new ResourceNotfoundException("User is not found: " + email));
+        List<Contact> contacts = contactService.getContactsByUser(user);
+        model.addAttribute("contacts", contacts); // "contacts" attribute is added
+
+        return "user/contacts";
     }
 }

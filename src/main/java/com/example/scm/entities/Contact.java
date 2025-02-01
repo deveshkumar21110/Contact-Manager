@@ -2,7 +2,6 @@ package com.example.scm.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -44,7 +43,7 @@ public class Contact {
     private String address;
 
     @Builder.Default
-    private boolean favourite = false;
+    private boolean favorite = false;
     private String websiteLink;
 
     // mapping without @JoinColumn
@@ -56,6 +55,7 @@ public class Contact {
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Builder.Default
     private List<SocialLink> socialLink = new ArrayList<>();
 }

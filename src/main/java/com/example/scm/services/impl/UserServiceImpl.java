@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.scm.exceptions.ResourceNotfoundException;
 import com.example.scm.forms.UserForm;
 import com.example.scm.helper.AppConstants;
+import com.example.scm.entities.Contact;
 import com.example.scm.entities.User;
 import com.example.scm.repositories.UserRepo;
 import com.example.scm.services.UserService;
