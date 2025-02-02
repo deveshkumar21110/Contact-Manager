@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -52,6 +53,7 @@ public class Contact {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // Custom column name for the foreign key
+    @JsonIgnore
     @JsonBackReference
     private User user;
 

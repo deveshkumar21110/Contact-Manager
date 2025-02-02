@@ -36,3 +36,12 @@
   }
 }
 
+.favorite-status .fa-heart {
+  color: grey; /* Default color */
+  cursor: pointer;
+}
+
+.favorite-status .fa-heart.favorited {
+  color: red; /* Color when favorited */
+}
+

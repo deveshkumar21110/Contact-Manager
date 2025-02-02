@@ -153,15 +153,20 @@
 
                     <td class="px-6 py-4">
                       <div class="flex items-center">
-                        <a target="_blank">
+                        <a
+                          th:href="'user/contact/delete/'+${c.id}" 
+                          target="_blank">
                           <i class="fa-solid w-6 h-6 fa-trash"></i>
                         </a>
                         <a target="_blank">
                           <i class="fa-solid w-6 h-6 fa-pen"></i>
                         </a>
-                        <a target="_blank">
+                        <button
+                          th:data-id="${c.id}"
+                          th:onclick="loadContactdata(this.getAttribute('data-id'))"
+                        >
                           <i class="fa-solid w-6 h-6 fa-eye"></i>
-                        </a>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -199,7 +204,7 @@
                       th:each="index: ${#numbers.sequence(0,contacts.totalPages-1)}"
                     >
                       <a
-                      th:href="@{/user/contacts(size=${defaultPageSize}, page=${index})}"
+                        th:href="@{/user/contacts(size=${defaultPageSize}, page=${index})}"
                         th:class="${index==contacts.number ? 'flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-green-400 dark:bg-gray-600 border border-gray-300 hover:bg-green-400 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white' : 'flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'}"
                         class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-green-400 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                       >
@@ -209,7 +214,7 @@
 
                     <li th:unless="${contacts.last}">
                       <a
-                      th:href="@{/user/contacts(size=${defaultPageSize}, page=${contacts.number + 1})}"
+                        th:href="@{/user/contacts(size=${defaultPageSize}, page=${contacts.number + 1})}"
                         class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-green-400 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                       >
                         <span class="sr-only">Next</span>
@@ -233,13 +238,18 @@
                   </ul>
                 </nav>
               </div>
-              <h1 class="text-5xl text-center dark:bg-gray-800 dark:text-white bg-white p-4" th:if="contacts.empty"></h1>
+              <h1
+                class="text-5xl text-center dark:bg-gray-800 dark:text-white bg-white p-4"
+                th:if="contacts.empty"
+              ></h1>
             </div>
           </div>
         </div>
-        <!-- <div th:replace="~{user/contact_modals :: contact}"></div> -->
+        <div th:replace="~{user/contact_modals :: contact}"></div>
       </div>
     </div>
+
+    <script th:src="@{/js/contacts.js}"></script>
 
     <script>
       console.log("This is the Contacts page");
