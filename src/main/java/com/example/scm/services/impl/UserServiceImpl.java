@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import com.example.scm.exceptions.ResourceNotfoundException;
 import com.example.scm.forms.UserForm;
 import com.example.scm.helper.AppConstants;
+import com.example.scm.helper.EmailHelper;
 import com.example.scm.entities.Contact;
 import com.example.scm.entities.User;
 import com.example.scm.repositories.UserRepo;
+import com.example.scm.services.MailService;
 import com.example.scm.services.UserService;
 
 import org.slf4j.Logger;
@@ -26,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private MailService mailService;
 
     private final BCryptPasswordEncoder encoder;
 
@@ -111,12 +116,21 @@ public class UserServiceImpl implements UserService {
         user.setPassword(userForm.getPassword()); // Encode the password
         user.setAbout(userForm.getAbout());
         user.setPhoneNumber(userForm.getPhoneNumber());
-
-        return saveUser(user);
+        String emailToken = UUID.randomUUID().toString();// email token
+        user.setEmailToken(emailToken);
+        User savedUser = saveUser(user);
+        String verifyLink = EmailHelper.getLinkForAuthentication(emailToken);
+        mailService.sendEmail("deve73kumar@gmail.com","Smart Contact Manager Email Verification",verifyLink);
+        return savedUser;
     }
 
     @Override
     public User saveOAuthUser(User user) {
         return userRepo.save(user);
+    }
+
+    @Override
+    public Optional<User> getUserByEmailToken(String emailToken) {
+        return userRepo.findByEmailToken(emailToken);
     }
 }

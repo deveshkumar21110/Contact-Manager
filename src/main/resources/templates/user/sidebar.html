@@ -12,9 +12,9 @@
       class="flex flex-col items-center ps-2.5 mb-8"
     >
       <img
-        onerror="this.onerror=null; this.src='https://flowbite.com/docs/images/logo.svg'"
+        onerror="this.onerror=null; src='/images/default.png'"
         data-th-src="@{${loggedInUser.profilePic}}"
-        src="https://flowbite.com/docs/images/logo.svg"
+        src="${loggedInUser.profilePic != null ? loggedInUser.profilePic : '/images/default.png'}" 
         class="h-16 me-3 sm:h-24 shadow-md rounded-full"
         alt="Flowbite Logo"
       />
@@ -116,7 +116,7 @@
       </li>
       <li>
         <a
-          href="#"
+          th:href="@{/logout}"
           class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
         >
           <svg

@@ -15,8 +15,8 @@ import com.example.scm.auth.authServices.MyUserDetailsService;
 @Configuration
 public class SecurityConfig {
 
-    // @Autowired
-    // private AuthSuccessHandler authSuccessHandler;
+        @Autowired
+        private AuthFailureHandler authFailureHandler;
 
     @Lazy
     private final AuthSuccessHandler authSuccessHandler;
@@ -38,7 +38,7 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/home", "/register", "/do-register", "/login", "/css/**", "/js/**",
+                        .requestMatchers("/home", "/register", "/do-register", "/login","/auth/**", "/css/**", "/js/**",
                                 "/images/**")
                         .permitAll()
                         .requestMatchers("/user/**").authenticated()
@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/user/profile") // successforwardurl is causing error of Post method not
                                                             // supported
                         .failureUrl("/login?error=true")
+                        .failureHandler(authFailureHandler)
                         .usernameParameter("email")
                         .passwordParameter("password"))
 

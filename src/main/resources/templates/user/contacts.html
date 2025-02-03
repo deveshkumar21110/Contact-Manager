@@ -20,6 +20,7 @@
           <p class="text-center">All Your Contacts...</p>
 
           <div class="contacts_container p-5">
+            <div th:replace="~{message::messagebox}"></div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
               <!-- search form  -->
               <form
@@ -153,12 +154,10 @@
 
                     <td class="px-6 py-4">
                       <div class="flex items-center">
-                        <a
-                          th:href="'user/contact/delete/'+${c.id}" 
-                          target="_blank">
+                        <button th:onclick="deleteContact([[${c.id}]])">
                           <i class="fa-solid w-6 h-6 fa-trash"></i>
-                        </a>
-                        <a target="_blank">
+                        </button>
+                        <a th:href="@{'/user/contacts/view/'+${c.id}}">
                           <i class="fa-solid w-6 h-6 fa-pen"></i>
                         </a>
                         <button
@@ -249,8 +248,14 @@
       </div>
     </div>
 
+    <!-- Load SweetAlert2 from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+
+    <!-- Use Thymeleaf to resolve the path for contacts.js -->
     <script th:src="@{/js/contacts.js}"></script>
 
+    <!-- Optional: Debugging log -->
     <script>
       console.log("This is the Contacts page");
     </script>

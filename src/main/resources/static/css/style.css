@@ -45,3 +45,57 @@
   color: red; /* Color when favorited */
 }
 
+/* Custom styles for the SweetAlert2 buttons */
+.swal2-confirm {
+  background-color: #007bff !important;  /* Blue color for confirm button */
+  color: white !important;               /* Text color */
+  border-radius: 5px !important;         /* Optional rounded corners */
+  padding: 10px 20px !important;         /* Optional padding */
+  font-size: 16px !important;            /* Optional font size */
+  border: none !important;               /* Remove default border */
+  box-shadow: none !important;           /* Remove default shadow */
+}
+
+.swal2-cancel {
+  background-color: #dc3545 !important;  /* Red color for cancel button */
+  color: white !important;               /* Text color */
+  border-radius: 5px !important;         /* Optional rounded corners */
+  padding: 10px 20px !important;         /* Optional padding */
+  font-size: 16px !important;            /* Optional font size */
+  border: none !important;               /* Remove default border */
+  box-shadow: none !important;           /* Remove default shadow */
+}
+
+.swal2-deny {
+  background-color: #6c757d !important;  /* Gray color for deny button */
+  color: white !important;               /* Text color */
+  border-radius: 5px !important;         /* Optional rounded corners */
+  padding: 10px 20px !important;         /* Optional padding */
+  font-size: 16px !important;            /* Optional font size */
+  border: none !important;               /* Remove default border */
+  box-shadow: none !important;           /* Remove default shadow */
+}
+
+/* Remove loader and other default SweetAlert2 styles if present */
+.swal2-loader {
+  display: none !important;  /* Hide the loader */
+}
+
+.swal2-actions {
+  display: flex;
+  justify-content: space-between;  /* Ensure buttons are spaced out */
+  align-items: center;             /* Vertically align buttons */
+  gap: 10px;                       /* Add space between buttons */
+}
+
+.swal2-confirm:hover {
+  background-color: #0056b3 !important;  /* Darker blue on hover */
+}
+
+.swal2-cancel:hover {
+  background-color: #c82333 !important;  /* Darker red on hover */
+}
+
+.swal2-deny:hover {
+  background-color: #5a6268 !important;  /* Darker gray on hover */
+}

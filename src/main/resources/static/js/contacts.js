@@ -42,38 +42,34 @@ async function loadContactdata(id) {
   //function call to load data
   console.log(id);
   try {
-      const response = await fetch(baseURL + `/api/contact/${id}`)
-      if(!response){
-        throw new Error(`HTTP !error status code: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log(data);
-      document.getElementById("contact_name").innerHTML = data.name;
-      document.getElementById("contact_email").innerHTML = data.email;
-      document.getElementById("contact_phoneNumber").innerHTML = data.phoneNumber;
-      document.getElementById("contact_picture").src = data.picture;
-      console.log(data.picture);
-      
-      document.getElementById("contact_description").innerHTML = data.description;
-      document.getElementById("contact_address").innerHTML = data.address;
-      // document.getElementById("contact_favorite").innerHTML = data.favorite;
-      const contactFavorite = document.querySelector("#contact_favorite");
-      if (data.favorite == true) {
-        contactFavorite.innerHTML = '<i class="fa-solid fa-heart" style="color: #b92222;"></i>';
-      } else {
-        contactFavorite.innerHTML = '<i class="fa-regular fa-heart"></i>';
-      }
-      document.getElementById("contact_websiteLink").href = data.websiteLink;
-      document.getElementById("contact_websiteLink").innerHTML = data.websiteLink;
-      // document.getElementById("contact_socialLink").innerHTML = data.socialLink;
-      openContactModal();
-      return data;
-    } catch (error) {
+    const response = await fetch(baseURL + `/api/contact/${id}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error status code: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data);
+    document.getElementById("contact_name").innerHTML = data.name;
+    document.getElementById("contact_email").innerHTML = data.email;
+    document.getElementById("contact_phoneNumber").innerHTML = data.phoneNumber;
+    document.getElementById("contact_picture").src = data.picture;
+    console.log(data.picture);
+
+    document.getElementById("contact_description").innerHTML = data.description;
+    document.getElementById("contact_address").innerHTML = data.address;
+    const contactFavorite = document.querySelector("#contact_favorite");
+    if (data.favorite == true) {
+      contactFavorite.innerHTML = '<i class="fa-solid fa-heart" style="color: #b92222;"></i>';
+    } else {
+      contactFavorite.innerHTML = '<i class="fa-regular fa-heart"></i>';
+    }
+    document.getElementById("contact_websiteLink").href = data.websiteLink;
+    document.getElementById("contact_websiteLink").innerHTML = data.websiteLink;
+    openContactModal();
+    return data;
+  } catch (error) {
     console.log(`error : ${error}`);
   }
 }
-
-// delete contact
 
 async function deleteContact(id) {
   Swal.fire({
@@ -81,6 +77,10 @@ async function deleteContact(id) {
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Delete",
+    customClass: {
+      confirmButton: 'btn-confirm',  // Custom class for the confirm button
+      cancelButton: 'btn-cancel'     // Custom class for the cancel button
+    }
   }).then((result) => {
     /* Read more about isConfirmed, isDenied below */
     if (result.isConfirmed) {
@@ -90,13 +90,12 @@ async function deleteContact(id) {
   });
 }
 
-
-function copyToClipboard(elementId,copyBtn) {
-  console.log(`copy fn called ${elementId} ${copyBtn.id}` );
+function copyToClipboard(elementId, copyBtn) {
+  console.log(`copy fn called ${elementId} ${copyBtn.id}`);
   
   let text = document.getElementById(elementId).innerText;
   navigator.clipboard.writeText(text).then(function() {
-    copyBtn.innerHTML= '<i class="fa-solid fa-check"></i>';
+    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
     setTimeout(function() {
       copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
     }, 2000);

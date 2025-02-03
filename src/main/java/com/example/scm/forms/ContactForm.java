@@ -33,6 +33,7 @@ public class ContactForm {
     private String phoneNumber;
 
     private MultipartFile picture;
+    private String pictureUrl;
     private String about;
     private String address;
     private boolean favorite;

@@ -15,7 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -188,4 +191,82 @@ public class ContactController {
         model.addAttribute("contacts", contacts);
         return "user/search";
     }
+
+    @RequestMapping("/delete/{contactId}")
+    public String deleteContact(
+            @PathVariable("contactId") String contactId,
+            HttpSession session) {
+        contactService.deleteContact(contactId);
+        session.setAttribute("message",
+                Message
+                        .builder()
+                        .content("")
+                        .build());
+        return "redirect:/user/contacts";
+    }
+
+    @GetMapping("/view/{contactId}")
+    public String updateContactFormView(@PathVariable("contactId") String contactId, Model model) {
+
+        Contact contact = contactService.getContactByContactId(contactId);
+        ContactForm contactForm = new ContactForm();
+        contactForm.setName(contact.getName());
+        contactForm.setEmail(contact.getEmail());
+        contactForm.setPhoneNumber(contact.getPhoneNumber());
+        contactForm.setAbout(contact.getDescription());
+        contactForm.setAddress(contact.getAddress());
+        contactForm.setFavorite(contact.isFavorite());
+        contactForm.setWebsiteLink(contact.getWebsiteLink());
+        contactForm.setPictureUrl(contact.getPicture());
+
+        model.addAttribute("contactId", contactId);
+        model.addAttribute("updateContactForm", contactForm);
+
+        return "user/update_contact_view";
+    }
+
+    @RequestMapping(value = "/update/{contactId}", method = RequestMethod.POST)
+    public String updateContact(@PathVariable("contactId") String contactId,
+            @Valid @ModelAttribute ContactForm contactForm,
+            BindingResult bindingResult,
+            Model model) {
+
+        // update the contact
+        if (bindingResult.hasErrors()) {
+            return "user/update_contact_view";
+        }
+
+        var con = contactService.getContactByContactId(contactId);
+        con.setId(contactId);
+        con.setName(contactForm.getName());
+        con.setEmail(contactForm.getEmail());
+        con.setPhoneNumber(contactForm.getPhoneNumber());
+        con.setAddress(contactForm.getAddress());
+        con.setDescription(contactForm.getAbout());
+        con.setFavorite(contactForm.isFavorite());
+        con.setWebsiteLink(contactForm.getWebsiteLink());
+
+        // process image:
+
+        if (contactForm.getPicture() != null && !contactForm.getPicture().isEmpty()) {
+            logger.info("file is not empty");
+            String fileName = UUID.randomUUID().toString();
+            String imageUrl = imageService.uploadImage(contactForm.getPicture(), fileName);
+            con.setFilePublicId(fileName);
+            con.setPicture(imageUrl);
+            contactForm.setPictureUrl(imageUrl);
+
+        } else {
+            logger.info("file is empty");
+        }
+
+        var updateCon = contactService.updateContact(con);
+        logger.info("updated contact {}", updateCon);
+
+        model.addAttribute("message", Message.builder().content("Contact Updated !!").type(MessageType.green).build());
+
+        return "redirect:/user/contacts/view/" + contactId;
+    }
+
+
 }

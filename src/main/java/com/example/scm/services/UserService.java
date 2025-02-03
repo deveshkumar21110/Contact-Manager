@@ -29,4 +29,6 @@ public interface UserService {
 
     List<User> getAllUsers();
 
+    Optional<User> getUserByEmailToken(String emailToken);
+
 }

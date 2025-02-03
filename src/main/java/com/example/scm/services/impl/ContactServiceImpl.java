@@ -36,7 +36,19 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public Contact updateContact(Contact contact) {
-        return contact;
+        Contact oldContact = repo.findById(contact.getId())
+                .orElseThrow(() -> new RuntimeException("Contact Not Found: " + contact.getId()));
+                oldContact.setName(contact.getName());
+                oldContact.setEmail(contact.getEmail());
+                oldContact.setPhoneNumber(contact.getPhoneNumber());
+                oldContact.setAddress(contact.getAddress());
+                oldContact.setDescription(contact.getDescription());
+                oldContact.setPicture(contact.getPicture());
+                oldContact.setFavorite(contact.isFavorite());
+                oldContact.setWebsiteLink(contact.getWebsiteLink());
+                oldContact.setFilePublicId(contact.getFilePublicId());
+        
+        return repo.save(oldContact);
     }
 
     @Override
@@ -67,61 +79,63 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public Page<Contact> getContactsByUser(User user, int page , int size,String sortBy, String direction) {
+    public Page<Contact> getContactsByUser(User user, int page, int size, String sortBy, String direction) {
 
         // sortBy = "name", direction = "asc"
 
-        Sort.Direction sortDirection = 
-            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
-        Sort sort = Sort.by(sortDirection,sortBy);
-  
-        PageRequest pageRequest = PageRequest.of(page, size,sort);
-        return repo.findByUser(user,pageRequest);
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like
+        // name,other attributes)
+        Sort sort = Sort.by(sortDirection, sortBy);
+
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return repo.findByUser(user, pageRequest);
     }
 
     @Override
-    public Page<Contact> searchByName(String nameKeyword, int page, int size, String sortBy, String direction,User user) {
+    public Page<Contact> searchByName(String nameKeyword, int page, int size, String sortBy, String direction,
+            User user) {
         // sortBy = "name", direction = "asc"
 
-        Sort.Direction sortDirection = 
-            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
-        Sort sort = Sort.by(sortDirection,sortBy);
-  
-        PageRequest pageRequest = PageRequest.of(page, size,sort);
-        return repo.findByUserAndNameContaining( user ,nameKeyword, pageRequest);
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like
+        // name,other attributes)
+        Sort sort = Sort.by(sortDirection, sortBy);
+
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return repo.findByUserAndNameContaining(user, nameKeyword, pageRequest);
     }
 
     @Override
-    public Page<Contact> searchByEmail(String emailKeyword, int page, int size, String sortBy, String direction,User user) {
+    public Page<Contact> searchByEmail(String emailKeyword, int page, int size, String sortBy, String direction,
+            User user) {
         // sortBy = "name", direction = "asc"
 
-        Sort.Direction sortDirection = 
-            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
-        Sort sort = Sort.by(sortDirection,sortBy);
-  
-        PageRequest pageRequest = PageRequest.of(page, size,sort);
-        return repo.findByUserAndEmailContaining( user,emailKeyword , pageRequest);
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like
+        // name,other attributes)
+        Sort sort = Sort.by(sortDirection, sortBy);
+
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return repo.findByUserAndEmailContaining(user, emailKeyword, pageRequest);
     }
 
     @Override
-    public Page<Contact> searchByPhoneNumber(String phonekeyword, int page, int size, String sortBy, String direction,User user) {
+    public Page<Contact> searchByPhoneNumber(String phonekeyword, int page, int size, String sortBy, String direction,
+            User user) {
         // sortBy = "name", direction = "asc"
 
-        Sort.Direction sortDirection = 
-            direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        // This Sort object takes two params - direction (sortDirection) , sortBy (like name,other attributes)
-        Sort sort = Sort.by(sortDirection,sortBy);
-  
-        PageRequest pageRequest = PageRequest.of(page, size,sort);
-        return repo.findByUserAndPhoneNumberContaining( user,phonekeyword , pageRequest);
+        // This Sort object takes two params - direction (sortDirection) , sortBy (like
+        // name,other attributes)
+        Sort sort = Sort.by(sortDirection, sortBy);
+
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return repo.findByUserAndPhoneNumberContaining(user, phonekeyword, pageRequest);
     }
 
-    
 }

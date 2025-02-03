@@ -29,6 +29,13 @@ import lombok.ToString;
 @ToString(exclude = "contacts")
 public class User {
 
+    
+    
+
+    public User(User user) {
+        
+    }
+
     @Id
     @Column(name = "user_id")
     private String id;
@@ -42,7 +49,8 @@ public class User {
     private String profilePic;
     private String phoneNumber;
 
-    private boolean enabled = true;
+    private boolean enabled = false;
+    private String emailToken;
     private boolean emailVerified = false;
     private boolean phoneVerified = false;
 
