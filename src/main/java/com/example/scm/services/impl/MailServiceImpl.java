@@ -10,10 +10,11 @@ import com.example.scm.services.MailService;
 @Service
 public class MailServiceImpl implements MailService{
 
-    private final JavaMailSender eMailSender;
+    private final JavaMailSender eMailSender;   
+    @Value("${spring.mail.properties.mail.smtp.from}") 
     private final String domainName;
 
-    public MailServiceImpl(JavaMailSender eMailSender, @Value("${spring.mail.properties.mail.smtp.from}") String domainName) {
+    public MailServiceImpl(JavaMailSender eMailSender, String domainName) {
         this.eMailSender = eMailSender;
         this.domainName = domainName;
     }

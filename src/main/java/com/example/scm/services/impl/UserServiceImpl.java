@@ -113,14 +113,14 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setName(userForm.getName());
         user.setEmail(userForm.getEmail());
-        user.setPassword(userForm.getPassword()); // Encode the password
+//        user.setPassword(userForm.getPassword()); // Encode the password
         user.setAbout(userForm.getAbout());
         user.setPhoneNumber(userForm.getPhoneNumber());
         String emailToken = UUID.randomUUID().toString();// email token
         user.setEmailToken(emailToken);
         User savedUser = saveUser(user);
         String verifyLink = EmailHelper.getLinkForAuthentication(emailToken);
-        mailService.sendEmail("deve73kumar@gmail.com","Smart Contact Manager Email Verification",verifyLink);
+        mailService.sendEmail(user.getName(),"Smart Contact Manager Email Verification",verifyLink);
         return savedUser;
     }
 

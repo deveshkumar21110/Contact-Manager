@@ -29,9 +29,6 @@ import lombok.ToString;
 @ToString(exclude = "contacts")
 public class User {
 
-    
-    
-
     public User(User user) {
         
     }
@@ -66,4 +63,5 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<Contact> contacts = new ArrayList<>();
+    // (mappedBy = "user") tells Hibernate that the user field in Contact controls the relationship.
 }

@@ -55,7 +55,7 @@ public class Contact {
     @JoinColumn(name = "user_id", nullable = false) // Custom column name for the foreign key
     @JsonIgnore
     @JsonBackReference
-    private User user;
+    private User user; // @JoinColumn(name = "user_id"):Specifies the foreign key column (user_id) in the Contact table.
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Builder.Default
